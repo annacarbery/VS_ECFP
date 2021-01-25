@@ -5,17 +5,19 @@ import os
 from utils import box_edges, generate_points, write_xyz_file, reduce_cloud, bubble_xyz
 
 
-if __name__ == '__main__':
+def main(target):
 
-    parser = argparse.ArgumentParser()
-    parser.add_argument("-t",
-                        "--target", required=True,
-                        )
-    args = vars(parser.parse_args())
-    target = args["target"]
+    # parser = argparse.ArgumentParser()
+    # parser.add_argument("-t",
+    #                     "--target", required=True,
+    #                     )
+    # args = vars(parser.parse_args())
+    # target = args["target"]
 
     TARGET_DIR = '/Users/tyt15771/Documents/VS_ECFP/data/targets'
     BUBBLE_DIR = '/Users/tyt15771/Documents/VS_ECFP/data/bubbles'
+
+    cmd.reinitialize()
 
     if not os.path.isdir(f'{BUBBLE_DIR}/{target}'):
         os.mkdir(f'{BUBBLE_DIR}/{target}')
@@ -26,5 +28,5 @@ if __name__ == '__main__':
     write_xyz_file(X.flatten(), Y.flatten(), Z.flatten(), filename=f'{BUBBLE_DIR}/{target}/box.xyz')
 
     # trim grid to layer over surface of protein
-    reduce_cloud(f'{BUBBLE_DIR}/{target}/box.xyz', f'{BUBBLE_DIR}/{target}/bubble.pdb')
+    reduce_cloud(f'{BUBBLE_DIR}/{target}/box.xyz', f'{BUBBLE_DIR}/{target}/bubble.pdb', near=2.5, far=4)
     bubble_xyz(f'{BUBBLE_DIR}/{target}/bubble.pdb')

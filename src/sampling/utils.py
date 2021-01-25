@@ -13,7 +13,7 @@ def box_edges(target_pdb, padding=10, clean=False):
     return mins, maxes
 
 
-def generate_points(mins, maxes, res=1.5): 
+def generate_points(mins, maxes, res=1.0): 
     X, Y, Z = np.mgrid[mins[0]:maxes[0]:res,
                     mins[1]:maxes[1]:res, 
                     mins[2]:maxes[2]:res
@@ -24,25 +24,16 @@ def generate_points(mins, maxes, res=1.5):
 def write_xyz_file(x, y, z, filename):
     xyz = open(filename, 'w')
     for i in range(len(x)):
-        xyz.write(f'H {x[i]} {y[i]} {z[i]}\n')
+        xyz.write(f'Mg {x[i]} {y[i]} {z[i]}\n')
     xyz.close()
 
 
-def reduce_cloud(filename, newfilename, near=2.5, far=8):
+def reduce_cloud(filename, newfilename, near=2, far=4):
     cmd.load(filename, 'cloud')
     cmd.extract('near', f'cloud within {near} of prot')
     cmd.extract('bubble', f'cloud within {far} of prot')
     cmd.save(newfilename, 'bubble')
 
-
-def reduce_ligand_cloud(filename, newfilename, target_filename, prot_distance=2.5, ligand_distance=4):
-    cmd.load(target_filename, 'target')
-    cmd.extract('hets', 'target and HETATM')
-    cmd.load(filename, 'ligand_box')
-    cmd.extract('protein_close', f'ligand_box within {prot_distance} of target')
-    cmd.save('../../smallbox.pdb', 'ligand_box')
-    cmd.select('lig_bubble', f'ligand_box within {ligand_distance} of prot')
-    cmd.save(newfilename, 'lig_bubble')
 
 
 def bubble_xyz(bubble_filename):
