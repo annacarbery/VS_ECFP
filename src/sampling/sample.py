@@ -15,7 +15,9 @@ def main(targ):
         write_xyz_file(x, y, z, '../../test_point.xyz')
         cmd.load('../../test_point.xyz', str(point_num))
         cmd.select('ligand', f'target within 10 of {str(point_num)}')
-        print(cmd.count_atoms('ligand'))
+        size = cmd.count_atoms('ligand')
+        if size < 100:
+            print(x, y, z, size)
         cmd.save(f'../../data/samples/{targ}/{point_num}.pdb', 'ligand')
         cmd.delete('ligand')
         point_num += 1

@@ -1,3 +1,4 @@
-./data/targets/*
-./data/bubbles/*
+*data*
 *vscode*
+*__pycache__*
+*DS*
