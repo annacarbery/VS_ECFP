@@ -13,7 +13,7 @@ def box_edges(target_pdb, padding=10, clean=False):
     return mins, maxes
 
 
-def generate_points(mins, maxes, res=1.0): 
+def generate_points(mins, maxes, res=1.5): 
     X, Y, Z = np.mgrid[mins[0]:maxes[0]:res,
                     mins[1]:maxes[1]:res, 
                     mins[2]:maxes[2]:res

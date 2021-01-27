@@ -1,6 +1,7 @@
 from pymol import cmd
 from utils import write_xyz_file
 import time
+import os
 
 def main(targ):
     target = f'../../data/bubbles/{targ}/bubble.xyz'
@@ -10,15 +11,15 @@ def main(targ):
     print(len(target_lines))
     point_num = 0
     for line in target_lines:
+
+        os.mkdir(f'../../data/samples/{targ}/{point_num}')
+
         coords = [float(i) for i in line[2:].strip().split(' ')]
         [x, y, z] = [[i] for i in coords]
         write_xyz_file(x, y, z, '../../test_point.xyz')
         cmd.load('../../test_point.xyz', str(point_num))
-        cmd.select('ligand', f'target within 10 of {str(point_num)}')
-        size = cmd.count_atoms('ligand')
-        if size < 100:
-            print(x, y, z, size)
-        cmd.save(f'../../data/samples/{targ}/{point_num}.pdb', 'ligand')
+        cmd.select('ligand', f'target within 7 of {str(point_num)}')
+        cmd.save(f'../../data/samples/{targ}/{point_num}/points.pdb', 'ligand')
         cmd.delete('ligand')
         point_num += 1
         if point_num % 1000 == 0:
