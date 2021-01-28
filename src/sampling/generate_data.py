@@ -33,6 +33,7 @@ def get_arrays(target, ligand, new_target, new_ligand):
     reference = reference_ECFP(target, ligand)
     print(reference)
     for sample in os.listdir(f'/Users/tyt15771/Documents/VS_ECFP/data/samples/{new_target}'):
+
         sample_ECFP = np.load(f'/Users/tyt15771/Documents/VS_ECFP/data/samples/{new_target}/{sample}/ECFP_FP.npy')
     
         input_array = np.concatenate((reference, sample_ECFP)).reshape(2, 16384)
@@ -56,12 +57,15 @@ def get_arrays(target, ligand, new_target, new_ligand):
         with open(f'/Users/tyt15771/Documents/VS_ECFP/data/input/{filetag}/distance.txt', 'w') as w:
             w.write(str(distance))
             w.close()
+        
+        print(filetag)
 
 def main():
 
     pairs = json.load(open('/Users/tyt15771/Documents/VS_ECFP/data/same_compound_hits.json', 'r'))
 
     for pair in pairs:
+        print(pair)
 
         reference = pair[0]
         ref_prot = pair[0].split('-')[0]
