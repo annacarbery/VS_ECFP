@@ -27,11 +27,14 @@ res = clf.predict(data_test)
 print('predicted')
 correct = 0
 incorrect = 0
+concerns = []
 for i in range(len(res)):
     if res[i] == class_test[i]:
         correct += 1
     else:
         incorrect += 1
+        of res[i] == 0:
+        concerns.append(i)
 
 print(correct, incorrect)
 
@@ -44,3 +47,4 @@ disp.figure_.suptitle("Confusion Matrix")
 print(f"Confusion matrix:\n{disp.confusion_matrix}")
 
 plt.show()
+json.dump(concerns, open('/Users/tyt15771/Documents/VS_ECFP/src/scoring/concerns.json', 'w'))

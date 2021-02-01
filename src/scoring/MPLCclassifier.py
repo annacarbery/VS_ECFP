@@ -4,10 +4,15 @@ from sklearn import metrics
 import json
 import matplotlib.pyplot as plt
 
-data_train = json.load(open('/Users/tyt15771/Documents/VS_ECFP/src/scoring/data_train.json', 'r'))
-class_train = json.load(open('/Users/tyt15771/Documents/VS_ECFP/src/scoring/class_train.json', 'r'))
-data_test = json.load(open('/Users/tyt15771/Documents/VS_ECFP/src/scoring/data_test.json', 'r'))
-class_test = json.load(open('/Users/tyt15771/Documents/VS_ECFP/src/scoring/class_test.json', 'r'))
+data_train = json.load(open('/Users/tyt15771/Documents/VS_ECFP/src/scoring/target_test_set/data_train.json', 'r'))
+print('1')
+class_train = json.load(open('/Users/tyt15771/Documents/VS_ECFP/src/scoring/target_test_set/class_train.json', 'r'))
+print('2')
+data_test = json.load(open('/Users/tyt15771/Documents/VS_ECFP/src/scoring/target_test_set/data_test.json', 'r'))[:958]
+print('3')
+class_test = json.load(open('/Users/tyt15771/Documents/VS_ECFP/src/scoring/target_test_set/class_test.json', 'r'))[:958]
+
+print('data loaded', len(data_train), len(data_test))
 
 print('data loaded ')
 scaler = StandardScaler()  
@@ -27,11 +32,14 @@ res = clf.predict(data_test)
 print('predicted')
 correct = 0
 incorrect = 0
+concerns = []
 for i in range(len(res)):
     if res[i] == class_test[i]:
         correct += 1
     else:
         incorrect += 1
+        if class_test[i] == 1:
+            concerns.append(i)
 
 print(correct, incorrect)
 
@@ -44,3 +52,4 @@ disp.figure_.suptitle("Confusion Matrix")
 print(f"Confusion matrix:\n{disp.confusion_matrix}")
 
 plt.show()
+json.dump(concerns, open('/Users/tyt15771/Documents/VS_ECFP/src/scoring/concerns.json', 'w'))

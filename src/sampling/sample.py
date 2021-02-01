@@ -4,22 +4,26 @@ import time
 import os
 
 def main(targ):
-    target = f'../../data/bubbles/{targ}/bubble.xyz'
+    BUBBLE_DIR = '/Users/tyt15771/Documents/VS_ECFP/data/bubbles'
+    SAMPLE_DIR = '/Users/tyt15771/Documents/VS_ECFP/data/samples'
+
+    target = f'{BUBBLE_DIR}/{targ}/bubble.xyz'
     cmd.load(target, 'target')
+
     print(time.ctime())
     target_lines = open(target, 'r').readlines()
     print(len(target_lines))
     point_num = 0
     for line in target_lines:
-
-        os.mkdir(f'../../data/samples/{targ}/{point_num}')
+        
+        os.mkdir(f'{SAMPLE_DIR}/{targ}/{point_num}')
 
         coords = [float(i) for i in line[2:].strip().split(' ')]
         [x, y, z] = [[i] for i in coords]
         write_xyz_file(x, y, z, '../../test_point.xyz')
         cmd.load('../../test_point.xyz', str(point_num))
         cmd.select('ligand', f'target within 7 of {str(point_num)}')
-        cmd.save(f'../../data/samples/{targ}/{point_num}/points.pdb', 'ligand')
+        cmd.save(f'{SAMPLE_DIR}/{targ}/{point_num}/points.pdb', 'ligand')
         cmd.delete('ligand')
         point_num += 1
         if point_num % 1000 == 0:
