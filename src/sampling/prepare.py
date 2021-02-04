@@ -5,14 +5,24 @@ import shutil
 from ECFP import main as gen_ECFP
 from ligand_distances import main as get_lig_dists
 
-for target in os.listdir('/Users/tyt15771/Documents/VS_ECFP/data/targets'):
+def make_dir(pathname):
+    if not os.path.isdir(pathname):
+        os.mkdir(pathname)
+
+DATA_DIR = f'{os.getcwd()}/data'
+print(DATA_DIR)
+
+make_dir(f'{DATA_DIR}/samples/')
+make_dir(f'{DATA_DIR}/bubbles/')
+
+for target in os.listdir(f'{DATA_DIR}/targets'):
     if 'Mpro' in target:
         try:
 
             print(target.split('.')[0])
-            if os.path.isdir(f'/Users/tyt15771/Documents/VS_ECFP/data/samples/{target.split(".")[0]}'):
-                shutil.rmtree(f'/Users/tyt15771/Documents/VS_ECFP/data/samples/{target.split(".")[0]}')
-            os.mkdir(f'/Users/tyt15771/Documents/VS_ECFP/data/samples/{target.split(".")[0]}')
+            if os.path.isdir(f'{DATA_DIR}/samples/{target.split(".")[0]}'):
+                shutil.rmtree(f'{DATA_DIR}/samples/{target.split(".")[0]}')
+            os.mkdir(f'{DATA_DIR}/samples/{target.split(".")[0]}')
 
             gen_pcd(target.split('.')[0])
             print('made target bubble')

@@ -14,8 +14,8 @@ def main(target):
     # args = vars(parser.parse_args())
     # target = args["target"]
 
-    TARGET_DIR = '/Users/tyt15771/Documents/VS_ECFP/data/targets'
-    BUBBLE_DIR = '/Users/tyt15771/Documents/VS_ECFP/data/bubbles'
+    TARGET_DIR = f'{os.getcwd()}/data/targets'
+    BUBBLE_DIR = f'{os.getcwd()}/data/bubbles'
 
     cmd.reinitialize()
 

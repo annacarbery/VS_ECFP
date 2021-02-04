@@ -4,8 +4,9 @@ import time
 import os
 
 def main(targ):
-    BUBBLE_DIR = '/Users/tyt15771/Documents/VS_ECFP/data/bubbles'
-    SAMPLE_DIR = '/Users/tyt15771/Documents/VS_ECFP/data/samples'
+    TARGET_DIR = f'{os.getcwd()}/data/targets'
+    BUBBLE_DIR = f'{os.getcwd()}/data/bubbles'
+    SAMPLE_DIR = f'{os.getcwd()}/data/samples'
 
     target = f'{BUBBLE_DIR}/{targ}/bubble.xyz'
     cmd.load(target, 'target')

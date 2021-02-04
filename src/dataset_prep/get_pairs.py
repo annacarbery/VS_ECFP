@@ -1,28 +1,23 @@
 from rdkit import Chem
 import os
 from rdkit import DataStructs
+import shutil
 
+cases = open('/dls/science/users/tyt15771/DPhil/VS_ECFP/cases.txt', 'r').readlines()
 
-target_ligands = {}
-for target in os.listdir('/Users/tyt15771/Documents/VS_ECFP/data/ligands'):
-    target_ligands[target] = []
-    for sdf in os.listdir(f'/Users/tyt15771/Documents/VS_ECFP/data/ligands/{target}'):
-        mol = Chem.MolFromMolFile(f'/Users/tyt15771/Documents/VS_ECFP/data/ligands/{target}/{sdf}')
-        target_ligands[target].append([sdf, mol])
+xtal_dir = '/dls/science/users/tyt15771/DPhil/VS_ECFP/data/ligands'
+target_dir = '/dls/science/users/tyt15771/DPhil/VS_ECFP/data/proteins'
 
-tot = 0
-for target in target_ligands:
-    fps = [(i[0], Chem.RDKFingerprint(i[1])) for i in target_ligands[target]]
-    for target2 in target_ligands:
-        if target != target2:
-            if 'Mac1_mArh' != f'{target}_{target2}' and 'Mac1_mArh' != f'{target2}_{target}' and 'MUREECA_MUREECOLI' != f'{target2}_{target}' and 'MUREECA_MUREECOLI' != f'{target}_{target2}':
-                fps2 = [(i[0], Chem.RDKFingerprint(i[1])) for i in target_ligands[target2]]
-
-                for fp in fps:
-                    for fp2 in fps2:
-                        if DataStructs.FingerprintSimilarity(fp[1], fp2[1]) == 1:
-                            print(fp[0], fp2[0])
-                            tot += 1
-
-print(tot)
-            
+num = 1
+for i in cases:
+    print(i)
+    xtals = i.strip().split(', ')
+    print(xtals)
+    os.mkdir(f'case_studies/{num}')
+    for x in xtals:
+        target = x.split('-')[0]
+        print(target, x)
+        shutil.copyfile(f'{xtal_dir}/{target}/{x}', f'case_studies/{num}/{x}')
+        shutil.copyfile(f'{target_dir}/{target}/{x[:-4]}.pdb', f'case_studies/{num}/{x[:-4]}.pdb')
+    
+    num += 1
