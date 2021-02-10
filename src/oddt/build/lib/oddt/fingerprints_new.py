@@ -605,45 +605,22 @@ def ECFP(mol, depth=2, size=4096, count_bits=True, sparse=True,
         Calsulated FP of fixed size (dense) or on bits indices (sparse). Dtype
         is either integer or boolean.
     """
-    # Hash atom environments
+     # Hash atom environments
     mol_hashed = []
     atom_repr_dict = {}
-    bits_info = {}
-    bit_info = []
     for idx, atom in enumerate(mol.atoms):
         if atom.atomicnum == 1:
             continue
         atom_repr_dict[idx] = _ECFP_atom_repr(
             mol, idx, use_pharm_features=use_pharm_features)
     for idx in atom_repr_dict.keys():
-        mol_hashed += [_ECFP_atom_hash(mol, idx, depth=depth,
+        mol_hashed.append(_ECFP_atom_hash(mol, idx, depth=depth,
                                           use_pharm_features=use_pharm_features,
-                                          atom_repr_dict=atom_repr_dict)]
-        bit_info.append([mol.atom_dict[idx][1], depth])
-        bit_info.append([mol.atom_dict[idx][1], depth])
-        bit_info.append([mol.atom_dict[idx][1], depth])
-    print(len(mol_hashed), len(bit_info))
-    print(bit_info[0])
-
-    print(mol_hashed[0])
-
-    mol_hashed = np.array(list(chain(*mol_hashed)))
-
+                                          atom_repr_dict=atom_repr_dict))
+    mol_hashed = np.array(sorted(chain(*mol_hashed)))
 
     # folding
     mol_hashed = fold(mol_hashed, size)
-
-
-    sort_indexes = np.argsort(mol_hashed)
-    plec = mol_hashed[sort_indexes].astype(np.min_scalar_type(size))
-  
-    # sort bit info according to folded PLEC
-    for bit_number, bit_info_idx in zip(plec, sort_indexes):
-        if bit_number not in bits_info:
-            bits_info[bit_number] = []
-        bits_info[bit_number].append(bit_info[bit_info_idx])
-
-
 
     if not count_bits:
         mol_hashed = np.unique(mol_hashed)
@@ -652,7 +629,7 @@ def ECFP(mol, depth=2, size=4096, count_bits=True, sparse=True,
     if not sparse:
         mol_hashed = sparse_to_dense(mol_hashed, size=size)
 
-    return mol_hashed, bits_info
+    return mol_hashed
 
 
 def SPLIF(ligand, protein, depth=1, size=4096, distance_cutoff=4.5):

@@ -1,6 +1,5 @@
-from sklearn.tree import DecisionTreeClassifier
 from sklearn.preprocessing import StandardScaler 
-from sklearn import svm
+from sklearn.neural_network import MLPClassifier
 import json
 import numpy as np
 from sklearn.metrics import plot_confusion_matrix
@@ -25,25 +24,28 @@ scaler.fit(X)
 X = scaler.transform(X)  
 X_test = scaler.transform(X_test)  
 
+
 random_state = np.random.RandomState(0)
-clf = svm.LinearSVC(random_state=random_state)
+clf = MLPClassifier(solver='lbfgs', alpha=1e-5, hidden_layer_sizes=(5, 2), random_state=1)
 clf.fit(X, y)
-y_score = clf.decision_function(X_test)
 
 plot_confusion_matrix(clf, X_test, y_test)  
-plt.savefig('confusion_SVM.png')
+plt.savefig('confusion_MLP.png')
+prob = clf.predict_proba(X_test)
+for i in range(len(y_test)):
+    print(y_test[i], prob[i])
 
-from sklearn.metrics import average_precision_score
-average_precision = average_precision_score(y_test, y_score)
+# from sklearn.metrics import average_precision_score
+# average_precision = average_precision_score(y_test, y_score)
 
-print('Average precision-recall score: {0:0.2f}'.format(
-      average_precision))
+# print('Average precision-recall score: {0:0.2f}'.format(
+#       average_precision))
 
-from sklearn.metrics import precision_recall_curve
-from sklearn.metrics import plot_precision_recall_curve
-import matplotlib.pyplot as plt
+# from sklearn.metrics import precision_recall_curve
+# from sklearn.metrics import plot_precision_recall_curve
+# import matplotlib.pyplot as plt
 
-disp = plot_precision_recall_curve(clf, X_test, y_test)
-disp.ax_.set_title('2-class Precision-Recall curve: '
-                   'AP={0:0.2f}'.format(average_precision))
-plt.savefig('PR_curve')
+# disp = plot_precision_recall_curve(clf, X_test, y_test)
+# disp.ax_.set_title('2-class Precision-Recall curve: '
+#                    'AP={0:0.2f}'.format(average_precision))
+# plt.savefig('PR_curve')

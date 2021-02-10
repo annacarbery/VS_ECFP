@@ -10,32 +10,17 @@ def depths(ECFP):
         total += ECFP[i]
     return set(total)
 
-def main(target):
+def main(lig, prot):
 
-    ref = f'/Users/tyt15771/Documents/VS_ECFP/data/targets/{target}.pdb'
-    
-    protein = next(oddt.toolkit.readfile('pdb', ref))
+    protein = next(oddt.toolkit.readfile('pdb', prot))
     protein.protein = True
 
-    for sample in os.listdir(f'/Users/tyt15771/Documents/VS_ECFP/data/samples/{target}'):
+    ligand = next(oddt.toolkit.readfile(lig.split('.')[1], lig))
+    
+    x, ECFP = PLEC(ligand, protein, depth_ligand=0, depth_protein=5)
+    ECFP = list(depths(ECFP))
+    folded_ECFP = fold(ECFP, size=4096)
+    vector_ECFP = sparse_to_dense(folded_ECFP, size=4096, count_bits=False)
+    return [int(i) for i in vector_ECFP]
 
-        if not os.path.isfile(f'/Users/tyt15771/Documents/VS_ECFP/data/samples/{target}/{sample}/ECFP_FP.npy'):
-            
-
-            lig = f'/Users/tyt15771/Documents/VS_ECFP/data/samples/{target}/{sample}/points.pdb'
-            ligand = next(oddt.toolkit.readfile('pdb', lig))
-
-            x, ECFP = PLEC(ligand, protein)
-            ECFP = list(depths(ECFP))
-            folded_ECFP = fold(ECFP, size=16384)
-            vector_ECFP = sparse_to_dense(folded_ECFP, size=16384)
-        
-            # json_file = f'/Users/tyt15771/Documents/VS_ECFP/data/samples/{target}/{sample}/ECFP.json'
-
-            # json.dump(ECFP, open(json_file, 'w'))
-            # print(sample)
-
-            npy_file = f'/Users/tyt15771/Documents/VS_ECFP/data/samples/{target}/{sample}/ECFP_FP.npy'
-
-            np.save(npy_file, vector_ECFP)
-            print(sample)
+    

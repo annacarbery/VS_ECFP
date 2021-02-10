@@ -56,12 +56,21 @@ for s in range(len(unique_smiles)):
                     if t not in ''.join(final):
                         if 'TNCA' in ''.join(final):
                             test_smiles_structures[smiles] = (final, shuffle_strucs[m])
+                            # print(final[0], shuffle_strucs[m])
                             shuffle_strucs.remove(shuffle_strucs[m])
+                            # print(final[0], final[1].strip()[0])
                             break
                         elif 'TNCA' not in shuffle_strucs[m]:
                             train_smiles_structures[smiles] = (final, shuffle_strucs[m])
                             shuffle_strucs.remove(shuffle_strucs[m])
+                            # print(final[0], final[1].strip())
                             break
+
+# for i in train_smiles_structures:
+#     print(i, train_smiles_structures[i][0][0], train_smiles_structures[i][0][1])
+# for i in test_smiles_structures:
+#     print(i, test_smiles_structures[i][0][0], test_smiles_structures[i][0][1])
+# print(test_smiles_structures)
 
 def depths(ECFP, min_depth):
     alls = []
@@ -114,12 +123,11 @@ def struct_pdb(lig, prot):
         
     
 
-
-def get_ECFP(prot):
-    lig = next(oddt.toolkit.readfile('pdb', 'tmp.pdb'))
+def get_ECFP(prot, lig, distance_threshold=4.5):
+    lig = next(oddt.toolkit.readfile(lig.split('.')[1], lig))
     prot = next(oddt.toolkit.readfile('pdb', prot))
 
-    a, ECFP = PLEC(lig, prot, depth_ligand=0, depth_protein=5)
+    a, ECFP = PLEC(lig, prot, depth_ligand=0, depth_protein=5, distance_cutoff=distance_threshold)
     ECFP = depths(ECFP, 0)
     ECFP = fold(ECFP, size=2048)
     ECFP = sparse_to_dense(ECFP, size=2048, count_bits=False)
@@ -129,11 +137,13 @@ def get_ECFP(prot):
 def get_ECFP_stacked(struc1, struc2):
     prot1, prot2 = struc1.replace('ligand', 'protein'), struc2.replace('ligand', 'protein')
     prot1, prot2 = prot1.replace('sdf', 'pdb'), prot2.replace('sdf', 'pdb')
+  
+    prot1, prot2 = struc1.split('/')[2], struc2.split('/')[2]
+    prot1, prot2 = f'data/targets/{prot1}.pdb', f'data/targets/{prot2}.pdb' 
 
-    struct_pdb(struc1, prot1)
-    ECFP1 = get_ECFP(prot1)
+    ECFP1 = get_ECFP(prot1, struc1, distance_threshold=6)
     struct_pdb(struc2, prot2)
-    ECFP2 = get_ECFP(prot2)
+    ECFP2 = get_ECFP(prot2, 'tmp.pdb', distance_threshold=6)
 
     stacked = []
     for i in range(2048):
@@ -167,11 +177,10 @@ for smiles in test_smiles_structures:
         print(smiles)
     except:
         print(smiles, sys.exc_info()[1])
-        raise
 
 
-print(train_X, train_y)
-json.dump(train_X, open('pairs_study/data/x_train.json', 'w'))
-json.dump(train_y, open('pairs_study/data/y_train.json', 'w'))
-json.dump(test_X, open('pairs_study/data/x_test.json', 'w'))
-json.dump(test_y, open('pairs_study/data/y_test.json', 'w'))
+
+json.dump(train_X, open('pairs_study/data/non-cognate/x_train.json', 'w'))
+json.dump(train_y, open('pairs_study/data/non-cognate/y_train.json', 'w'))
+json.dump(test_X, open('pairs_study/data/non-cognate/x_test.json', 'w'))
+json.dump(test_y, open('pairs_study/data/non-cognate/y_test.json', 'w'))

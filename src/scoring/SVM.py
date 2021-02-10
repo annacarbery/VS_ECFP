@@ -3,48 +3,83 @@ from sklearn.preprocessing import StandardScaler
 from sklearn import metrics
 import json
 import matplotlib.pyplot as plt
+from sklearn.metrics import precision_recall_curve
+from sklearn.metrics import plot_precision_recall_curve
 
-data_train = json.load(open('/Users/tyt15771/Documents/VS_ECFP/src/scoring/data_train.json', 'r'))
-class_train = json.load(open('/Users/tyt15771/Documents/VS_ECFP/src/scoring/class_train.json', 'r'))
-data_test = json.load(open('/Users/tyt15771/Documents/VS_ECFP/src/scoring/data_test.json', 'r'))
-class_test = json.load(open('/Users/tyt15771/Documents/VS_ECFP/src/scoring/class_test.json', 'r'))
 
-print('data loaded')
+X_train = json.load(open('/dls/science/users/tyt15771/DPhil/VS_ECFP/X_train.json', 'r'))
+y_train = json.load(open('/dls/science/users/tyt15771/DPhil/VS_ECFP/Y_train.json', 'r'))
+# X_test = json.load(open('/dls/science/users/tyt15771/DPhil/VS_ECFP/X_control.json', 'r'))
+# y_test = json.load(open('/dls/science/users/tyt15771/DPhil/VS_ECFP/Y_control.json', 'r'))
+# X_control = json.load(open('/dls/science/users/tyt15771/DPhil/VS_ECFP/X_control.json', 'r'))
+# y_control = json.load(open('/dls/science/users/tyt15771/DPhil/VS_ECFP/Y_control.json', 'r'))
+
+# print('data loaded', len(X_train), len(y_train), len(X_test), len(y_test))
+
+X = []
+y = []
+
+for pair in X_train:
+    X += X_train[pair]
+    y += y_train[pair]
+print(len(X))
 scaler = StandardScaler()  
 # Don't cheat - fit only on training data
-scaler.fit(data_train)  
-data_train = scaler.transform(data_train)  
+scaler.fit(X)  
+data_train = scaler.transform(X)  
 # apply same transformation to test data
-data_test = scaler.transform(data_test)
+# data_test = scaler.transform(X_test)
 
 print('scaled')
 
 clf = svm.SVC()
 
-clf.fit(data_train, class_train)
+clf.fit(X, y)
 print('trained')
-res = clf.predict(data_test)
-print('predicted')
-correct = 0
-incorrect = 0
-concerns = []
-for i in range(len(res)):
-    if res[i] == class_test[i]:
-        correct += 1
-    else:
-        incorrect += 1
-        of res[i] == 0:
-        concerns.append(i)
+# res = clf.predict(X_test)
+# print('predicted')
+# correct = 0
+# incorrect = 0
+# maybe = []
+# for i in range(len(res)):
+#     if res[i] == y_test[i]:
+#         correct += 1
+#     elif y_test[i] != 0.5:
+#         incorrect += 1
+#     else:
+#         maybe.append(res[i])
 
-print(correct, incorrect)
+# print(correct, incorrect)
+# print(maybe.count(0), maybe.count(1))
 
-print(f"Classification report for classifier {clf}:\n"
-      f"{metrics.classification_report(class_test, res)}\n")
+# json.dump([int(i) for i in res], open('SVM_res.json', 'w'))
+
+# art_y_test = []
+# for i in y_test:
+#     if i != 0.5:
+#         art_y_test.append(i)
+#     else:
+#         art_y_test.append(0)
+
+
+# y_score = clf.decision_function(X_test)       
+# from sklearn.metrics import average_precision_score
+# average_precision = average_precision_score(art_y_test, y_score)
+
+# print('Average precision-recall score: {0:0.2f}'.format(
+#       average_precision))
+
+
+# disp = plot_precision_recall_curve(clf, X_test, art_y_test)
+# disp.ax_.set_title('2-class Precision-Recall curve: '
+#                    'AP={0:0.2f}'.format(average_precision))
+# plt.savefig('SVM_PR.png')
+# print(f"Classification report for classifier {clf}:\n"
+#       f"{metrics.classification_report(y_test, res)}\n")
 
     
-disp = metrics.plot_confusion_matrix(clf, data_test, class_test)
-disp.figure_.suptitle("Confusion Matrix")
-print(f"Confusion matrix:\n{disp.confusion_matrix}")
+# disp = metrics.plot_confusion_matrix(clf, X_test, y_test)
+# disp.figure_.suptitle("Confusion Matrix")
+# print(f"Confusion matrix:\n{disp.confusion_matrix}")
 
-plt.show()
-json.dump(concerns, open('/Users/tyt15771/Documents/VS_ECFP/src/scoring/concerns.json', 'w'))
+# plt.savefig('SVM_conf_matrix.png')

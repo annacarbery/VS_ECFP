@@ -1,6 +1,13 @@
 import numpy as np
 from pymol import cmd
 
+def dist(point1, point2):
+    return np.sqrt(
+        sum([
+            (float(point1[i])-float(point2[i])) ** 2 for i in range(len(point1))
+        ])
+    )
+
 def box_edges(target_pdb, padding=10, clean=False):
     cmd.reinitialize()
     cmd.load(target_pdb, 'prot')
@@ -28,7 +35,10 @@ def write_xyz_file(x, y, z, filename):
     xyz.close()
 
 
-def reduce_cloud(filename, newfilename, near=2, far=4):
+def reduce_cloud(filename, newfilename, prot, near=2, far=4):
+    cmd.reinitialize()
+    cmd.load(prot, 'prot')
+    cmd.extract('hets', 'prot and HETATM')
     cmd.load(filename, 'cloud')
     cmd.extract('near', f'cloud within {near} of prot')
     cmd.extract('bubble', f'cloud within {far} of prot')
@@ -42,3 +52,14 @@ def bubble_xyz(bubble_filename):
     y = [float(l[38:46]) for l in bubble_lines]
     z = [float(l[46:54]) for l in bubble_lines]
     write_xyz_file(x, y, z, filename=bubble_filename[:-4]+'.xyz')
+
+def sample_pdb(points, datatype):
+    X, Y, Z = [i[0] for i in points], [i[1] for i in points], [i[2] for i in points]
+    write_xyz_file(X, Y, Z, f'/dls/science/users/tyt15771/DPhil/VS_ECFP/data/tmp/sample_{datatype}.xyz')
+    cmd.reinitialize()
+    cmd.load(f'/dls/science/users/tyt15771/DPhil/VS_ECFP/data/tmp/sample_{datatype}.xyz', 'sample')
+    cmd.save(f'/dls/science/users/tyt15771/DPhil/VS_ECFP/data/tmp/sample_{datatype}.pdb', 'sample')
+
+def stack_ECFP(ref, sample):
+    stacked = [ref[i]+sample[i] for i in range(len(ref))]
+    return stacked
