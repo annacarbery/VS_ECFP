@@ -44,6 +44,6 @@ for pair in pairs:
         json.dump(pos, open('pos_control.json', 'w'))
     except:
         print(pair.strip(), sys.exc_info()[1])
-        raise
+
 
 print('control data completed')
